@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  taskflow:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: taskflow-cli:latest
+    container_name: taskflow
+    volumes:
+      # Persist database between runs
+      - taskflow-data:/app/data
+    environment:
+      - NODE_ENV=production
+      - DATABASE_PATH=/app/data/taskflow.db
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+    # Interactive mode for CLI usage
+    stdin_open: true
+    tty: true
+
+volumes:
+  taskflow-data:
+    name: taskflow-data

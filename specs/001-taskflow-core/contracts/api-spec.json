@@ -1,0 +1,402 @@
+{
+  "cli": {
+    "name": "taskflow",
+    "version": "1.0.0",
+    "description": "Multi-agent task management CLI",
+    "globalOptions": {
+      "--json": {
+        "type": "boolean",
+        "default": false,
+        "description": "Output results as JSON"
+      },
+      "--verbose": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable verbose output"
+      }
+    },
+    "commands": {
+      "task": {
+        "description": "Task management commands",
+        "subcommands": {
+          "create": {
+            "description": "Create a new task",
+            "arguments": {
+              "title": {
+                "type": "string",
+                "required": true,
+                "description": "Task title"
+              }
+            },
+            "options": {
+              "--description": {
+                "type": "string",
+                "alias": "-d",
+                "description": "Task description"
+              },
+              "--priority": {
+                "type": "enum",
+                "values": ["low", "medium", "high", "urgent"],
+                "default": "medium",
+                "alias": "-p",
+                "description": "Task priority"
+              },
+              "--due": {
+                "type": "string",
+                "description": "Due date (ISO 8601 format)"
+              },
+              "--tags": {
+                "type": "string",
+                "alias": "-t",
+                "description": "Comma-separated tags"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "Task",
+                  "description": "Created task object"
+                },
+                "text": "Task created: {id} - {title}"
+              },
+              "error": {
+                "exitCode": 1,
+                "json": {
+                  "error": "string",
+                  "code": "string"
+                },
+                "text": "Error: {message}"
+              }
+            }
+          },
+          "list": {
+            "description": "List all tasks",
+            "options": {
+              "--status": {
+                "type": "enum",
+                "values": ["pending", "in_progress", "done", "cancelled"],
+                "alias": "-s",
+                "description": "Filter by status"
+              },
+              "--priority": {
+                "type": "enum",
+                "values": ["low", "medium", "high", "urgent"],
+                "alias": "-p",
+                "description": "Filter by priority"
+              },
+              "--limit": {
+                "type": "number",
+                "default": 50,
+                "alias": "-n",
+                "description": "Maximum number of tasks to return"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "Task[]",
+                  "description": "Array of task objects"
+                },
+                "text": "Table format with columns: ID, Title, Status, Priority, Due Date"
+              }
+            }
+          },
+          "get": {
+            "description": "Get a specific task by ID",
+            "arguments": {
+              "id": {
+                "type": "string",
+                "required": true,
+                "description": "Task ID"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "Task",
+                  "description": "Task object"
+                }
+              },
+              "error": {
+                "exitCode": 1,
+                "message": "Task not found"
+              }
+            }
+          },
+          "update": {
+            "description": "Update an existing task",
+            "arguments": {
+              "id": {
+                "type": "string",
+                "required": true,
+                "description": "Task ID"
+              }
+            },
+            "options": {
+              "--title": {
+                "type": "string",
+                "description": "New title"
+              },
+              "--description": {
+                "type": "string",
+                "alias": "-d",
+                "description": "New description"
+              },
+              "--status": {
+                "type": "enum",
+                "values": ["pending", "in_progress", "done", "cancelled"],
+                "alias": "-s",
+                "description": "New status"
+              },
+              "--priority": {
+                "type": "enum",
+                "values": ["low", "medium", "high", "urgent"],
+                "alias": "-p",
+                "description": "New priority"
+              },
+              "--due": {
+                "type": "string",
+                "description": "New due date"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "Task",
+                  "description": "Updated task object"
+                }
+              }
+            }
+          },
+          "delete": {
+            "description": "Delete a task",
+            "arguments": {
+              "id": {
+                "type": "string",
+                "required": true,
+                "description": "Task ID"
+              }
+            },
+            "options": {
+              "--force": {
+                "type": "boolean",
+                "alias": "-f",
+                "description": "Skip confirmation"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "deleted": true,
+                  "id": "string"
+                },
+                "text": "Task {id} deleted"
+              }
+            }
+          }
+        }
+      },
+      "agent": {
+        "description": "Agent management commands",
+        "subcommands": {
+          "list": {
+            "description": "List all available agents",
+            "output": {
+              "success": {
+                "json": {
+                  "type": "AgentInfo[]",
+                  "description": "Array of agent information objects"
+                },
+                "text": "Table format with columns: Name, Status, Capabilities"
+              }
+            }
+          },
+          "status": {
+            "description": "Get status of a specific agent",
+            "arguments": {
+              "name": {
+                "type": "string",
+                "required": true,
+                "description": "Agent name"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "AgentInfo",
+                  "description": "Agent information object"
+                }
+              }
+            }
+          },
+          "invoke": {
+            "description": "Invoke an agent directly",
+            "arguments": {
+              "name": {
+                "type": "string",
+                "required": true,
+                "description": "Agent name"
+              }
+            },
+            "options": {
+              "--action": {
+                "type": "string",
+                "required": true,
+                "alias": "-a",
+                "description": "Action to perform"
+              },
+              "--params": {
+                "type": "string",
+                "description": "JSON string of parameters"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "AgentResponse",
+                  "description": "Agent response object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "reason": {
+        "description": "Invoke the reasoning agent",
+        "arguments": {
+          "goal": {
+            "type": "string",
+            "required": true,
+            "description": "What you want the reasoning agent to analyze or decide"
+          }
+        },
+        "options": {
+          "--max-iterations": {
+            "type": "number",
+            "default": 10,
+            "alias": "-m",
+            "description": "Maximum reasoning iterations"
+          },
+          "--show-steps": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show detailed reasoning steps"
+          }
+        },
+        "output": {
+          "success": {
+            "json": {
+              "type": "ReasoningResult",
+              "properties": {
+                "goal": "string",
+                "result": "string",
+                "confidence": "number",
+                "steps": "ReasoningStep[]",
+                "recommendations": "string[]"
+              }
+            },
+            "text": "Formatted reasoning result with recommendations"
+          }
+        }
+      },
+      "notifications": {
+        "description": "Notification management commands",
+        "subcommands": {
+          "list": {
+            "description": "List notifications",
+            "options": {
+              "--unread": {
+                "type": "boolean",
+                "alias": "-u",
+                "description": "Show only unread notifications"
+              },
+              "--limit": {
+                "type": "number",
+                "default": 20,
+                "alias": "-n",
+                "description": "Maximum notifications to show"
+              }
+            },
+            "output": {
+              "success": {
+                "json": {
+                  "type": "Notification[]",
+                  "description": "Array of notification objects"
+                }
+              }
+            }
+          },
+          "clear": {
+            "description": "Mark all notifications as read",
+            "output": {
+              "success": {
+                "json": {
+                  "cleared": "number"
+                },
+                "text": "Cleared {count} notifications"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "types": {
+    "Task": {
+      "id": "string (UUID)",
+      "title": "string",
+      "description": "string | null",
+      "status": "pending | in_progress | done | cancelled",
+      "priority": "low | medium | high | urgent",
+      "dueDate": "string (ISO 8601) | null",
+      "tags": "string[]",
+      "createdAt": "string (ISO 8601)",
+      "updatedAt": "string (ISO 8601)"
+    },
+    "AgentInfo": {
+      "name": "string",
+      "displayName": "string",
+      "description": "string",
+      "capabilities": "string[]",
+      "status": "active | inactive | error"
+    },
+    "AgentResponse": {
+      "success": "boolean",
+      "agent": "string",
+      "action": "string",
+      "data": "any",
+      "error": "string | null"
+    },
+    "ReasoningStep": {
+      "id": "string",
+      "stepNumber": "number",
+      "phase": "observe | think | plan | act | reflect",
+      "input": "string",
+      "output": "string",
+      "durationMs": "number"
+    },
+    "ReasoningResult": {
+      "goal": "string",
+      "result": "string",
+      "confidence": "number (0-1)",
+      "steps": "ReasoningStep[]",
+      "recommendations": "string[]",
+      "sessionId": "string",
+      "totalDurationMs": "number"
+    },
+    "Notification": {
+      "id": "string",
+      "type": "task_created | task_updated | task_completed | task_overdue",
+      "taskId": "string",
+      "message": "string",
+      "read": "boolean",
+      "createdAt": "string (ISO 8601)"
+    }
+  },
+  "exitCodes": {
+    "0": "Success",
+    "1": "General error",
+    "2": "Invalid arguments",
+    "3": "Resource not found"
+  }
+}
