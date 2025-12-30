@@ -39,10 +39,19 @@
 - **Integration Tests**: Test component interactions with real dependencies
 - **Unit Tests**: Test isolated logic (use sparingly, prefer integration)
 
-### Section 3.3: Test Environment
+### Section 3.3: Test Isolation (MANDATORY)
+- Tests MUST be completely isolated and independent
+- Tests MUST run successfully in any order
+- Tests MUST run successfully in parallel without conflicts
+- Tests MUST NOT depend on state from other tests
+- Tests MUST clean up all state in `beforeEach`/`afterEach` hooks
+- Shared state between tests is STRICTLY PROHIBITED
+
+### Section 3.4: Test Environment
 - Prefer real databases/services over mocks
 - Mocks are permitted only for external services outside our control
-- Tests MUST run in isolation (no shared state between tests)
+- Each test MUST start with a clean, known state
+- Use in-memory databases or test-specific data for isolation
 
 ## Article IV: Agent Architecture
 
@@ -132,6 +141,10 @@ Modifications to this constitution require:
 
 ---
 
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 **Ratified**: 2025-12-30  
-**Last Amended**: 2025-12-30
+**Last Amended**: 2025-12-30  
+
+### Amendment History
+- **v1.1.0** (2025-12-30): Enhanced Article III, Section 3.3 with explicit test isolation requirements (parallel execution, order independence, state cleanup mandates)
+- **v1.0.0** (2025-12-30): Initial constitution ratified
