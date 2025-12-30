@@ -19,6 +19,8 @@ describe('TaskAgent Contract', () => {
     resetStorage();
     // Get the singleton storage (will be created with :memory: path)
     storage = getStorage();
+    // Clear all data to ensure test isolation
+    storage.clearAllData();
     agent = new TaskAgent();
   });
 
@@ -242,12 +244,6 @@ describe('TaskAgent Contract', () => {
 
   describe('list action', () => {
     beforeEach(async () => {
-      // Clean up any existing tasks
-      const existingTasks = await agent.execute<Task[]>({ action: 'list', params: {} });
-      for (const task of existingTasks.data || []) {
-        await agent.execute({ action: 'delete', params: { id: task.id } });
-      }
-      
       // Create test tasks
       await agent.execute({ action: 'create', params: { title: 'Task 1', priority: 'low' } });
       await agent.execute({ action: 'create', params: { title: 'Task 2', priority: 'high' } });
@@ -307,12 +303,6 @@ describe('TaskAgent Contract', () => {
 
   describe('getOverdue action', () => {
     it('should return overdue tasks', async () => {
-      // Clean up any existing tasks
-      const existingTasks = await agent.execute<Task[]>({ action: 'list', params: {} });
-      for (const task of existingTasks.data || []) {
-        await agent.execute({ action: 'delete', params: { id: task.id } });
-      }
-      
       // Create an overdue task
       const pastDate = new Date(Date.now() - 86400000).toISOString(); // Yesterday
       await agent.execute({

@@ -328,6 +328,16 @@ export class Storage {
   // ===========================================================================
 
   /**
+   * Clear all data from all tables.
+   * Useful for testing to ensure clean state.
+   */
+  clearAllData(): void {
+    this.db.exec('DELETE FROM notifications');
+    this.db.exec('DELETE FROM tasks');
+    logger.debug('All data cleared from database');
+  }
+
+  /**
    * Close the database connection.
    */
   close(): void {
