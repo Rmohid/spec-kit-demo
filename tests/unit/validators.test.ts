@@ -10,8 +10,6 @@ import {
   CreateTaskSchema,
   UpdateTaskSchema,
   TaskFiltersSchema,
-  ReasoningGoalSchema,
-  ReasoningOptionsSchema,
 } from '../../src/lib/validators.js';
 
 describe('Validators', () => {
@@ -152,60 +150,6 @@ describe('Validators', () => {
 
     it('should reject limit over 1000', () => {
       const result = safeValidate(TaskFiltersSchema, { limit: 1001 });
-
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('ReasoningGoalSchema', () => {
-    it('should validate valid goal', () => {
-      const result = safeValidate(ReasoningGoalSchema, 'What should I work on?');
-
-      expect(result.success).toBe(true);
-    });
-
-    it('should reject empty goal', () => {
-      const result = safeValidate(ReasoningGoalSchema, '');
-
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject goal over 1000 chars', () => {
-      const result = safeValidate(ReasoningGoalSchema, 'x'.repeat(1001));
-
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('ReasoningOptionsSchema', () => {
-    it('should provide defaults', () => {
-      const result = safeValidate(ReasoningOptionsSchema, {});
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.maxIterations).toBe(10);
-        expect(result.data.timeoutMs).toBe(30000);
-        expect(result.data.includeSteps).toBe(false);
-      }
-    });
-
-    it('should validate custom options', () => {
-      const result = safeValidate(ReasoningOptionsSchema, {
-        maxIterations: 5,
-        timeoutMs: 10000,
-        includeSteps: true,
-      });
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.maxIterations).toBe(5);
-        expect(result.data.timeoutMs).toBe(10000);
-        expect(result.data.includeSteps).toBe(true);
-      }
-    });
-
-    it('should reject maxIterations over 100', () => {
-      const result = safeValidate(ReasoningOptionsSchema, { maxIterations: 101 });
 
       expect(result.success).toBe(false);
     });

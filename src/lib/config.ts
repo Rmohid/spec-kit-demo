@@ -30,17 +30,8 @@ export interface Config {
     /** Log format: json or text */
     format: 'json' | 'text';
   };
-  /** Reasoning agent configuration */
-  reasoning: {
-    /** Maximum iterations for reasoning loop */
-    maxIterations: number;
-    /** Timeout in milliseconds */
-    timeoutMs: number;
-  };
   /** Feature flags */
   features: {
-    /** Enable reasoning agent */
-    enableReasoningAgent: boolean;
     /** Enable notifications */
     enableNotifications: boolean;
   };
@@ -51,18 +42,6 @@ export interface Config {
  */
 function getEnvString(key: string, defaultValue: string): string {
   return process.env[key] ?? defaultValue;
-}
-
-/**
- * Get a number environment variable with a default value.
- */
-function getEnvNumber(key: string, defaultValue: number): number {
-  const value = process.env[key];
-  if (value === undefined) {
-    return defaultValue;
-  }
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) ? defaultValue : parsed;
 }
 
 /**
@@ -108,12 +87,7 @@ function loadConfig(): Config {
       level: getEnvString('LOG_LEVEL', 'info'),
       format: logFormat,
     },
-    reasoning: {
-      maxIterations: getEnvNumber('REASONING_MAX_ITERATIONS', 10),
-      timeoutMs: getEnvNumber('REASONING_TIMEOUT_MS', 30000),
-    },
     features: {
-      enableReasoningAgent: getEnvBoolean('ENABLE_REASONING_AGENT', true),
       enableNotifications: getEnvBoolean('ENABLE_NOTIFICATIONS', true),
     },
   };

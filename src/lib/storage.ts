@@ -16,7 +16,6 @@ import type {
   CreateTaskInput,
   UpdateTaskInput,
   TaskFilters,
-  ReasoningStep,
   Notification,
   NotificationFilters,
 } from './types.js';
@@ -42,20 +41,6 @@ CREATE TABLE IF NOT EXISTS tasks (
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 CREATE INDEX IF NOT EXISTS idx_tasks_priority ON tasks(priority);
 CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date);
-
--- Reasoning steps table
-CREATE TABLE IF NOT EXISTS reasoning_steps (
-  id TEXT PRIMARY KEY,
-  session_id TEXT NOT NULL,
-  step_number INTEGER NOT NULL,
-  phase TEXT NOT NULL,
-  input TEXT NOT NULL,
-  output TEXT NOT NULL,
-  duration_ms INTEGER NOT NULL,
-  created_at TEXT NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS idx_reasoning_session ON reasoning_steps(session_id);
 
 -- Notifications table
 CREATE TABLE IF NOT EXISTS notifications (
@@ -267,52 +252,6 @@ export class Storage {
   }
 
   // ===========================================================================
-  // Reasoning Step Operations
-  // ===========================================================================
-
-  /**
-   * Save a reasoning step.
-   */
-  saveReasoningStep(step: Omit<ReasoningStep, 'id' | 'createdAt'>): ReasoningStep {
-    const now = new Date().toISOString();
-    const id = uuidv4();
-
-    const stmt = this.db.prepare(`
-      INSERT INTO reasoning_steps (id, session_id, step_number, phase, input, output, duration_ms, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    stmt.run(id, step.sessionId, step.stepNumber, step.phase, step.input, step.output, step.durationMs, now);
-
-    return {
-      id,
-      ...step,
-      createdAt: now,
-    };
-  }
-
-  /**
-   * Get reasoning steps for a session.
-   */
-  getReasoningSteps(sessionId: string): ReasoningStep[] {
-    const stmt = this.db.prepare(
-      'SELECT * FROM reasoning_steps WHERE session_id = ? ORDER BY step_number ASC'
-    );
-    const rows = stmt.all(sessionId) as ReasoningStepRow[];
-
-    return rows.map((row) => ({
-      id: row.id,
-      sessionId: row.session_id,
-      stepNumber: row.step_number,
-      phase: row.phase as ReasoningStep['phase'],
-      input: row.input,
-      output: row.output,
-      durationMs: row.duration_ms,
-      createdAt: row.created_at,
-    }));
-  }
-
-  // ===========================================================================
   // Notification Operations
   // ===========================================================================
 
@@ -428,17 +367,6 @@ interface TaskRow {
   tags: string;
   created_at: string;
   updated_at: string;
-}
-
-interface ReasoningStepRow {
-  id: string;
-  session_id: string;
-  step_number: number;
-  phase: string;
-  input: string;
-  output: string;
-  duration_ms: number;
-  created_at: string;
 }
 
 interface NotificationRow {

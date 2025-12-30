@@ -6,7 +6,7 @@
  */
 
 import { TaskAgent } from '../../src/agents/task-agent/index.js';
-import { Storage, resetStorage } from '../../src/lib/storage.js';
+import { Storage, resetStorage, getStorage } from '../../src/lib/storage.js';
 import type { Task } from '../../src/lib/types.js';
 
 describe('TaskAgent Contract', () => {
@@ -17,7 +17,8 @@ describe('TaskAgent Contract', () => {
     // Use in-memory database for tests
     process.env['DATABASE_PATH'] = ':memory:';
     resetStorage();
-    storage = new Storage(':memory:');
+    // Get the singleton storage (will be created with :memory: path)
+    storage = getStorage();
     agent = new TaskAgent();
   });
 
@@ -241,10 +242,24 @@ describe('TaskAgent Contract', () => {
 
   describe('list action', () => {
     beforeEach(async () => {
+      // Clean up any existing tasks
+      const existingTasks = await agent.execute<Task[]>({ action: 'list', params: {} });
+      for (const task of existingTasks.data || []) {
+        await agent.execute({ action: 'delete', params: { id: task.id } });
+      }
+      
       // Create test tasks
       await agent.execute({ action: 'create', params: { title: 'Task 1', priority: 'low' } });
       await agent.execute({ action: 'create', params: { title: 'Task 2', priority: 'high' } });
-      await agent.execute({ action: 'create', params: { title: 'Task 3', priority: 'high', status: 'done' } });
+      const task3 = await agent.execute<Task>({ 
+        action: 'create', 
+        params: { title: 'Task 3', priority: 'high' } 
+      });
+      // Update Task 3 to done status
+      await agent.execute({ 
+        action: 'update', 
+        params: { id: task3.data?.id, status: 'done' } 
+      });
     });
 
     it('should list all tasks', async () => {
@@ -292,6 +307,12 @@ describe('TaskAgent Contract', () => {
 
   describe('getOverdue action', () => {
     it('should return overdue tasks', async () => {
+      // Clean up any existing tasks
+      const existingTasks = await agent.execute<Task[]>({ action: 'list', params: {} });
+      for (const task of existingTasks.data || []) {
+        await agent.execute({ action: 'delete', params: { id: task.id } });
+      }
+      
       // Create an overdue task
       const pastDate = new Date(Date.now() - 86400000).toISOString(); // Yesterday
       await agent.execute({

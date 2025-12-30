@@ -9,12 +9,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { getCoordinator } from '../../agents/coordinator/index.js';
-// Agent registry is accessed via coordinator
 import type { AgentInfo, AgentResponse } from '../../lib/types.js';
-
-// Ensure reasoning agent is registered
-import { getReasoningAgent } from '../../agents/reasoning-agent/index.js';
-getReasoningAgent();
 
 /**
  * Format agent info for display.

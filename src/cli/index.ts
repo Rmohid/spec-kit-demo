@@ -10,7 +10,6 @@
 import { Command } from 'commander';
 import { registerTaskCommands } from './commands/task.js';
 import { registerAgentCommands } from './commands/agent.js';
-import { registerReasonCommand } from './commands/reason.js';
 import { registerNotificationCommands } from './commands/notifications.js';
 import { logger } from '../lib/logger.js';
 
@@ -32,7 +31,6 @@ function createProgram(): Command {
   // Register command modules
   registerTaskCommands(program);
   registerAgentCommands(program);
-  registerReasonCommand(program);
   registerNotificationCommands(program);
 
   // Global error handler

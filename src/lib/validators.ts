@@ -150,32 +150,6 @@ export const AgentRequestSchema = z.object({
 });
 
 // =============================================================================
-// Reasoning Schemas
-// =============================================================================
-
-/**
- * Reasoning phase validation.
- */
-export const ReasoningPhaseSchema = z.enum(['observe', 'think', 'plan', 'act', 'reflect']);
-
-/**
- * Schema for reasoning options.
- */
-export const ReasoningOptionsSchema = z.object({
-  maxIterations: z.number().int().min(1).max(100).default(10),
-  timeoutMs: z.number().int().min(1000).max(300000).default(30000),
-  includeSteps: z.boolean().default(false),
-});
-
-/**
- * Schema for reasoning goal input.
- */
-export const ReasoningGoalSchema = z
-  .string()
-  .min(1, 'Goal is required')
-  .max(1000, 'Goal must be 1000 characters or less');
-
-// =============================================================================
 // Notification Schemas
 // =============================================================================
 
@@ -205,7 +179,6 @@ export type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof UpdateTaskSchema>;
 export type TaskFilters = z.infer<typeof TaskFiltersSchema>;
 export type AgentRequest = z.infer<typeof AgentRequestSchema>;
-export type ReasoningOptions = z.infer<typeof ReasoningOptionsSchema>;
 export type NotificationFilters = z.infer<typeof NotificationFiltersSchema>;
 
 // =============================================================================

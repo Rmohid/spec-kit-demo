@@ -16,7 +16,7 @@ This repository serves as a **learning resource** for teams transitioning from t
 - Writing effective specifications before code
 - Creating implementation plans from specifications
 - Breaking down plans into executable tasks
-- Building multiple types of agents, including a **fully autonomous reasoning agent**
+- Building agents with **GitHub Copilot Custom Agents**
 - The complete SDD lifecycle from design to deployment
 
 ## 📚 About Spec-Driven Development
@@ -75,11 +75,32 @@ npm start -- task create "Learn Spec-Driven Development"
 # List all tasks
 npm start -- task list
 
-# Ask the reasoning agent for recommendations
-npm start -- reason "What should I work on next?"
-
 # See all available agents
 npm start -- agent list
+```
+
+## 🤖 AI-Powered Agents (GitHub Copilot)
+
+This project uses **GitHub Copilot Custom Agents** for AI-powered functionality. These agents leverage Copilot's LLM capabilities directly—no API keys required.
+
+### Available Copilot Agents
+
+| Agent | File | Purpose |
+|-------|------|---------|
+| `@task-advisor` | `.github/agents/task-advisor.md` | AI-powered task prioritization & recommendations |
+| `@code-reviewer` | `.github/agents/code-reviewer.md` | AI-powered code review |
+| `@speckit-specify` | `.github/agents/speckit.specify.md` | Create feature specifications |
+| `@speckit-plan` | `.github/agents/speckit.plan.md` | Create implementation plans |
+| `@speckit-tasks` | `.github/agents/speckit.tasks.md` | Break down plans into tasks |
+| `@speckit-implement` | `.github/agents/speckit.implement.md` | Implement with TDD |
+
+### Using Copilot Agents
+
+**In Copilot Chat (GitHub.com, VS Code, CLI):**
+```
+@task-advisor What should I work on next?
+@code-reviewer Review this PR for security issues
+@speckit-specify Create a spec for user authentication
 ```
 
 ## 📁 Project Structure
@@ -88,6 +109,12 @@ This project follows Spec Kit conventions:
 
 ```
 spec-kit-demo/
+├── .github/
+│   └── agents/                  # GitHub Copilot Custom Agents
+│       ├── task-advisor.md      # AI task prioritization
+│       ├── code-reviewer.md     # AI code review
+│       └── speckit.*.md         # SDD workflow agents
+│
 ├── .specify/                    # Spec Kit framework
 │   ├── memory/
 │   │   └── constitution.md      # Project governing principles
@@ -104,11 +131,10 @@ spec-kit-demo/
 │       └── contracts/           # API contracts
 │
 ├── src/
-│   ├── agents/                  # Agent implementations
+│   ├── agents/                  # Local CLI agent implementations
 │   │   ├── coordinator/         # Request routing
 │   │   ├── task-agent/          # Task CRUD
-│   │   ├── notification-agent/  # Event notifications
-│   │   └── reasoning-agent/     # 🌟 Autonomous reasoning
+│   │   └── notification-agent/  # Event notifications
 │   ├── lib/                     # Shared libraries
 │   └── cli/                     # CLI entry points
 │
@@ -120,7 +146,7 @@ spec-kit-demo/
 └── docs/                        # Learning documentation
 ```
 
-## 🤖 The Agents
+## 🤖 Local CLI Agents
 
 ### Coordinator Agent
 Routes requests to appropriate specialized agents. No business logic—pure orchestration.
@@ -130,27 +156,6 @@ Handles all task CRUD operations: create, read, update, delete, list.
 
 ### Notification Agent
 Creates and manages notifications for task lifecycle events.
-
-### Reasoning Agent ⭐
-A **fully autonomous agent** that demonstrates advanced agent patterns:
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     REASONING LOOP                               │
-├─────────────────────────────────────────────────────────────────┤
-│  1. OBSERVE  │ Gather context about tasks and state             │
-│  2. THINK    │ Analyze observations, form hypotheses            │
-│  3. PLAN     │ Decide what tools to use                         │
-│  4. ACT      │ Execute tools to gather info or take action      │
-│  5. REFLECT  │ Evaluate results, generate recommendations       │
-│  6. REPEAT   │ Loop until goal achieved or limit reached        │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**Example:**
-```bash
-npm start -- reason "What should I work on next?" --show-steps
-```
 
 ## 🧪 Testing
 
@@ -176,7 +181,7 @@ New to SDD? Follow this recommended learning path:
 5. **[Task Breakdown](docs/05-task-breakdown.md)** - Breaking plans into tasks
 6. **[Implementation](docs/06-implementation.md)** - TDD workflow
 7. **[Agents Explained](docs/07-agents-explained.md)** - Agent architecture
-8. **[Reasoning Agent Deep Dive](docs/08-reasoning-agent.md)** - Building autonomous agents
+8. **[Copilot Agents](docs/08-copilot-agents.md)** - Using AI-powered custom agents
 9. **[Deployment](docs/09-deployment.md)** - Production deployment
 
 ## 🔧 CLI Reference
@@ -206,11 +211,6 @@ taskflow task delete <id>                # Delete a task
 taskflow agent list                      # List all agents
 taskflow agent status <name>             # Get agent status
 taskflow agent invoke <name> [options]   # Invoke agent directly
-```
-
-#### Reasoning
-```bash
-taskflow reason <goal> [options]         # Invoke reasoning agent
 ```
 
 #### Notifications
@@ -260,7 +260,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 - [GitHub Spec Kit](https://github.com/github/spec-kit) - The official Spec Kit repository
 - [Spec-Driven Development Guide](https://github.com/github/spec-kit/blob/main/spec-driven.md) - Full SDD methodology
-- [ReAct Paper](https://arxiv.org/abs/2210.03629) - The reasoning pattern used in the Reasoning Agent
+- [GitHub Copilot Custom Agents](https://docs.github.com/en/copilot/tutorials/customization-library/custom-agents) - Building custom agents
 
 ---
 
